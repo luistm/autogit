@@ -17,7 +17,7 @@ def main():
         "checkout",
         help="Create and switch to a new git branch for the ticket",
         description=(
-            "Create and checkout a new git branch using the provided label as the branch name."
+            "Create and checkout a new git branch using the provided title as the branch name."
         ),
     )
     p.add_argument(
@@ -28,10 +28,10 @@ def main():
     )
     p.add_argument(
         "-l",
-        "--label",
+        "--link",
         required=True,
         help=(
-            "Machine-friendly label to extract as the prefix and number for the branch, e.g. 'PREFIX-1234-fix-login-redirect'"
+            "Machine-friendly link to extract as the prefix and number for the branch, e.g. 'https://example.com/PREFIX-1234'"
         ),
     )
 
@@ -39,15 +39,15 @@ def main():
 
     if args.command == "checkout":
         title = args.title
-        label = args.label
+        link = args.link
 
         # Create and checkout branch
         try:
-            if len(label.split("-")) < 3:
-                print("Label must be in the format PREFIX-1234-something")
+            if len(link.split("/")) < 3:
+                print("Link must be in the format 'https://example.com/PREFIX-1234'")
                 sys.exit(1)
-            prefix = label.split("-")[0].upper()
-            ticket_number = label.split("-")[1]
+            prefix = link.split("/")[-1].split("-")[0].upper()
+            ticket_number = link.split("-")[-1]
             branch_name = "-".join([prefix.upper(), ticket_number, slugify(title)])
 
             proc = subprocess.run(
