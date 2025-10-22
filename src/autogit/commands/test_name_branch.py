@@ -1,6 +1,6 @@
 import pytest
 
-from autogit import name_branch
+from .checkout import name_branch
 
 
 def test_name_branch_happy_path():

@@ -2,11 +2,9 @@
 
 import argparse
 import os
-import subprocess
 import sys
 
-from slugify import slugify
-from urllib.parse import urlparse
+from commands import checkout, createworkspace
 
 
 def main():
@@ -50,93 +48,12 @@ def main():
     if args.command == "checkout":
         title = args.title
         link = args.link
-        _checkout(title, link)
+        checkout.run(title, link)
 
     if args.command == "createworkspace":
         base_path = os.path.expanduser("~/Desktop/Workspace")
-        _create_folder(base_path)
+        createworkspace.run(base_path)
 
     # If we reach here, subcommand is unknown (argparse would normally prevent this)
     parser.print_help()
     sys.exit(2)
-
-
-def _checkout(title, link):
-    # Create and checkout branch
-    branch_name = name_branch(link, title)
-    try:
-        proc = subprocess.run(
-            ["git", "checkout", "-b", branch_name],
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-        if proc.returncode != 0:
-            print(f"Failed to create and checkout branch '{branch_name}'.", file=sys.stderr)
-    except FileNotFoundError:
-        print("git executable not found on PATH", file=sys.stderr)
-        sys.exit(127)
-
-    print(f"Now on branch '{branch_name}'.")
-    sys.exit(0)
-
-
-def _create_folder(base_path: str):
-    # Resolve base path (expand ~ and env vars)
-    base_path = os.path.expandvars(os.path.expanduser(base_path))
-
-    # Get current git branch name
-    try:
-        proc = subprocess.run(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-            check=False,
-            capture_output=True,
-            text=True,
-        )
-    except FileNotFoundError:
-        print("git executable not found on PATH", file=sys.stderr)
-        sys.exit(127)
-
-    if proc.returncode != 0:
-        print("Failed to determine current git branch (are you in a git repository?)", file=sys.stderr)
-        sys.exit(proc.returncode or 1)
-
-    branch_name = proc.stdout.strip()
-    if not branch_name:
-        print("Could not determine current git branch name.", file=sys.stderr)
-        sys.exit(1)
-
-    # Compose final directory path and create it
-    target_dir = os.path.join(base_path, branch_name)
-    try:
-        os.makedirs(target_dir, exist_ok=True)
-    except OSError as e:
-        print(f"Failed to create directory '{target_dir}': {e}", file=sys.stderr)
-        sys.exit(1)
-
-    print(f"Created/exists: {target_dir}")
-    sys.exit(0)
-
-
-def name_branch(link, title):
-    # Validate that link is a well-formed URL with scheme and netloc
-    try:
-        parsed = urlparse(link)
-    except Exception:
-        print("Link must be in the format 'https://example.com/PREFIX-1234'")
-        sys.exit(1)
-
-    if parsed.scheme not in ("http", "https") or not parsed.netloc:
-        print("Link must be in the format 'https://example.com/PREFIX-1234'")
-        sys.exit(1)
-
-    # Extract last path segment expected to be like PREFIX-1234
-    last_segment = parsed.path.strip("/").split("/")[-1] if parsed.path else ""
-    if not last_segment or "-" not in last_segment:
-        print("Link must be in the format 'https://example.com/PREFIX-1234'")
-        sys.exit(1)
-
-    prefix = last_segment.split("-")[0].upper()
-    ticket_number = last_segment.split("-")[-1]
-    branch_name = "-".join([prefix.upper(), ticket_number, slugify(title)])
-    return branch_name
