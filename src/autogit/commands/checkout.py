@@ -19,6 +19,7 @@ def run(title: str, link: str) -> None:
                 f"Failed to create and checkout branch '{branch_name}'.",
                 file=sys.stderr,
             )
+            sys.exit(proc.returncode)
     except FileNotFoundError:
         print("git executable not found on PATH", file=sys.stderr)
         sys.exit(127)
