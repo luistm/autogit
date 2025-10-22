@@ -4,7 +4,7 @@ import argparse
 import os
 import sys
 
-from commands import checkout, createworkspace
+from .commands import checkout, createworkspace
 
 
 def main():
