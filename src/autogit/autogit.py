@@ -9,7 +9,7 @@ from slugify import slugify
 def main():
     parser = argparse.ArgumentParser(
         prog="autogit",
-        description="Utilities to automate common git workflows",
+        description="Utilities to automate frequently used git workflows",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
