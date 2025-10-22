@@ -6,7 +6,7 @@ import sys
 
 from slugify import slugify
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         prog="autogit",
         description="Utilities to automate common git workflows",
