@@ -38,27 +38,31 @@ def main():
         title = args.title
         link = args.link
 
-        # Create and checkout branch
-        branch_name = name_branch(link, title)
-        try:
-            proc = subprocess.run(
-                ["git", "checkout", "-b", branch_name],
-                check=False,
-                capture_output=True,
-                text=True,
-            )
-            if proc.returncode != 0:
-                print(f"Failed to create and checkout branch '{branch_name}'.", file=sys.stderr)
-        except FileNotFoundError:
-            print("git executable not found on PATH", file=sys.stderr)
-            sys.exit(127)
-
-        print(f"Now on branch '{branch_name}'.")
-        sys.exit(0)
+        _checkout(title, link)
 
     # If we reach here, subcommand is unknown (argparse would normally prevent this)
     parser.print_help()
     sys.exit(2)
+
+
+def _checkout(title, link):
+    # Create and checkout branch
+    branch_name = name_branch(link, title)
+    try:
+        proc = subprocess.run(
+            ["git", "checkout", "-b", branch_name],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if proc.returncode != 0:
+            print(f"Failed to create and checkout branch '{branch_name}'.", file=sys.stderr)
+    except FileNotFoundError:
+        print("git executable not found on PATH", file=sys.stderr)
+        sys.exit(127)
+
+    print(f"Now on branch '{branch_name}'.")
+    sys.exit(0)
 
 
 def name_branch(link, title):
