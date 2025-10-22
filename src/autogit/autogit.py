@@ -42,14 +42,8 @@ def main():
         link = args.link
 
         # Create and checkout branch
+        branch_name = name_branch(link, title)
         try:
-            if len(link.split("/")) < 3:
-                print("Link must be in the format 'https://example.com/PREFIX-1234'")
-                sys.exit(1)
-            prefix = link.split("/")[-1].split("-")[0].upper()
-            ticket_number = link.split("-")[-1]
-            branch_name = "-".join([prefix.upper(), ticket_number, slugify(title)])
-
             proc = subprocess.run(
                 ["git", "checkout", "-b", branch_name],
                 check=False,
@@ -74,3 +68,13 @@ def main():
     # If we reach here, subcommand is unknown (argparse would normally prevent this)
     parser.print_help()
     sys.exit(2)
+
+
+def name_branch(link, title):
+    if len(link.split("/")) < 3:
+        print("Link must be in the format 'https://example.com/PREFIX-1234'")
+        sys.exit(1)
+    prefix = link.split("/")[-1].split("-")[0].upper()
+    ticket_number = link.split("-")[-1]
+    branch_name = "-".join([prefix.upper(), ticket_number, slugify(title)])
+    return branch_name
