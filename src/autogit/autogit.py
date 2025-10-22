@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 from slugify import slugify
+from urllib.parse import urlparse
 
 
 def main():
@@ -118,10 +119,24 @@ def _create_folder(base_path: str):
 
 
 def name_branch(link, title):
-    if len(link.split("/")) < 3:
+    # Validate that link is a well-formed URL with scheme and netloc
+    try:
+        parsed = urlparse(link)
+    except Exception:
         print("Link must be in the format 'https://example.com/PREFIX-1234'")
         sys.exit(1)
-    prefix = link.split("/")[-1].split("-")[0].upper()
-    ticket_number = link.split("-")[-1]
+
+    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+        print("Link must be in the format 'https://example.com/PREFIX-1234'")
+        sys.exit(1)
+
+    # Extract last path segment expected to be like PREFIX-1234
+    last_segment = parsed.path.strip("/").split("/")[-1] if parsed.path else ""
+    if not last_segment or "-" not in last_segment:
+        print("Link must be in the format 'https://example.com/PREFIX-1234'")
+        sys.exit(1)
+
+    prefix = last_segment.split("-")[0].upper()
+    ticket_number = last_segment.split("-")[-1]
     branch_name = "-".join([prefix.upper(), ticket_number, slugify(title)])
     return branch_name
