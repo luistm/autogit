@@ -1,6 +1,7 @@
 clean:
 	-rm -rf dist
-	-rm -rf src/autogit.egg-info
+	-rm -rf build
+	-rm -rf src/luis_autogit.egg-info
 
 publish: clean ## Publishes the project in pypi
 	python -m build
