@@ -3,6 +3,7 @@ python-slugify==8.0.4
 
 # Development
 pytest==8.4.2
+black==25.9.0
 
 # Build and publish dependencies
 twine==6.2.0

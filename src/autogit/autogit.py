@@ -6,6 +6,7 @@ import sys
 
 from slugify import slugify
 
+
 def main():
     parser = argparse.ArgumentParser(
         prog="autogit",
@@ -16,9 +17,7 @@ def main():
     p = subparsers.add_parser(
         "checkout",
         help="Create and switch to a new git branch for the ticket",
-        description=(
-            "Create and checkout a new git branch using the provided title as the branch name."
-        ),
+        description="Create and checkout a new git branch using the provided title as the branch name.",
     )
     p.add_argument(
         "-b",
@@ -30,9 +29,7 @@ def main():
         "-l",
         "--link",
         required=True,
-        help=(
-            "Machine-friendly link to extract as the prefix and number for the branch, e.g. 'https://example.com/PREFIX-1234'"
-        ),
+        help="Machine-friendly link to extract as the prefix and number for the branch, e.g. 'https://example.com/PREFIX-1234'",
     )
 
     args = parser.parse_args()
@@ -51,13 +48,7 @@ def main():
                 text=True,
             )
             if proc.returncode != 0:
-                print(
-                    f"Failed to create and checkout branch '{branch_name}'.",
-                    file=sys.stderr,
-                )
-                if proc.stderr.strip():
-                    print(proc.stderr.strip(), file=sys.stderr)
-                sys.exit(proc.returncode or 1)
+                print(f"Failed to create and checkout branch '{branch_name}'.", file=sys.stderr)
         except FileNotFoundError:
             print("git executable not found on PATH", file=sys.stderr)
             sys.exit(127)
