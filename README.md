@@ -1,1 +1,1 @@
-# githooks
+# Autogit
