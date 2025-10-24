@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "luis-autogit"
-version = "0.3.1"
+version = "0.4.0"
 readme = "README.md"
 description = "Utilities to automate frequently used git workflows."
 dependencies = [

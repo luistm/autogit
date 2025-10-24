@@ -18,19 +18,23 @@ def main():
     p = subparsers.add_parser(
         "checkout",
         help="Create and switch to a new git branch for the ticket",
-        description="Create and checkout a new git branch using the provided title as the branch name.",
+        description=(
+            "Create and checkout a new git branch using the provided title and link.\n"
+            "Usage: autogit checkout <title> <link>\n"
+            "Example: autogit checkout 'Fix login redirect' https://example.com/ABC-1234"
+        ),
     )
+    # Positional arguments: title then link
     p.add_argument(
-        "-b",
-        "--title",
-        required=True,
+        "title",
         help="Human-friendly ticket title, e.g. 'Fix login redirect'",
     )
     p.add_argument(
-        "-l",
-        "--link",
-        required=True,
-        help="Machine-friendly link to extract as the prefix and number for the branch, e.g. 'https://example.com/PREFIX-1234'",
+        "link",
+        help=(
+            "Machine-friendly link to extract the prefix and number for the branch, e.g. "
+            "'https://example.com/PREFIX-1234'"
+        ),
     )
 
     # createworkspace subcommand

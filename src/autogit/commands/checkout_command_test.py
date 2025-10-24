@@ -43,7 +43,7 @@ def test_checkout_git_not_found(monkeypatch, capsys):
 
 
 def test_checkout_git_failure_nonzero(monkeypatch, capsys):
-    # Simulate git failing to create the branch; current implementation still exits 0
+    # Simulate git failing to create the branch; current implementation exits with the git return code
     def fake_run(cmd, check=False, capture_output=True, text=True):
         return DummyProc(returncode=1, stderr="failed")
 
@@ -51,9 +51,9 @@ def test_checkout_git_failure_nonzero(monkeypatch, capsys):
 
     with pytest.raises(SystemExit) as ex:
         checkout.run(title="X", link="https://example.com/ABC-99")
-    # Despite failure, command prints error and exits 0 per current behavior
-    assert ex.value.code == 0
+    # On failure, should exit with the non-zero code and not print success message
+    assert ex.value.code == 1
 
     out, err = capsys.readouterr()
     assert "Failed to create and checkout branch 'ABC-99-x'." in err
-    assert "Now on branch 'ABC-99-x'." in out
+    assert out == ""
